@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A simple weekly beverage ordering tool for the 2026 catalogue." />
+    <title>Weekly order builder · Nantel &amp; McDiarmid</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="Weekly order builder home">
+          <span class="brand-mark">N<span>&amp;</span>M</span>
+          <span>
+            <strong>Nantel &amp; McDiarmid</strong>
+            <small>Weekly order builder</small>
+          </span>
+        </a>
+        <div class="header-note"><span class="live-dot"></span> 2026 catalogue · draft order</div>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="page-title">
+          <div class="hero-copy">
+            <p class="eyebrow">The easy way to restock</p>
+            <h1 id="page-title">Build this week’s<br /><em>good stuff.</em></h1>
+            <p class="hero-intro">Choose your cases, adjust quantities with the arrows or your keyboard, and copy a tidy order message when you’re ready.</p>
+            <div class="hero-meta">
+              <span><b id="catalogue-count">56</b> catalogue products</span>
+              <span class="meta-separator">·</span>
+              <span>13 collection sections</span>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="hero-ring hero-ring-one"></div>
+            <div class="hero-ring hero-ring-two"></div>
+            <div class="hero-can can-orange"><i>LOOP</i><b>orange<br />clementine</b></div>
+            <div class="hero-can can-green"><i>LOOP</i><b>deep<br />green</b></div>
+            <div class="hero-spark spark-one">✦</div>
+            <div class="hero-spark spark-two">✦</div>
+            <span class="hero-caption">fresh picks<br /><strong>for the week</strong></span>
+          </div>
+        </section>
+
+        <section class="catalogue-layout" aria-label="Catalogue and order summary">
+          <div class="catalogue-column">
+            <div class="catalogue-toolbar">
+              <div>
+                <p class="section-kicker">Catalogue 2026</p>
+                <h2>Pick your products</h2>
+              </div>
+              <label class="search-box">
+                <span aria-hidden="true">⌕</span>
+                <input id="search" type="search" placeholder="Search products or codes" autocomplete="off" />
+              </label>
+            </div>
+
+            <nav class="category-nav" id="category-nav" aria-label="Product categories"></nav>
+            <p class="results-note" id="results-note"></p>
+            <div class="product-sections" id="product-sections"></div>
+          </div>
+
+          <aside class="order-panel" aria-labelledby="order-title">
+            <div class="order-panel-inner">
+              <div class="order-panel-heading">
+                <div>
+                  <p class="section-kicker">Your order</p>
+                  <h2 id="order-title">Ready to copy</h2>
+                </div>
+                <button class="text-button" id="clear-order" type="button">Clear all</button>
+              </div>
+
+              <div class="order-total">
+                <strong id="total-units">0</strong>
+                <span>cases &amp; boxes selected</span>
+              </div>
+
+              <div class="selected-list" id="selected-list">
+                <div class="empty-state">
+                  <span class="empty-icon">＋</span>
+                  <p>Your order is empty.</p>
+                  <small>Use the quantity controls to add products.</small>
+                </div>
+              </div>
+
+              <label class="message-label" for="order-message">Order message</label>
+              <textarea id="order-message" readonly spellcheck="false"></textarea>
+              <button class="copy-button" id="copy-order" type="button">
+                <span class="copy-icon">▣</span>
+                <span>Copy order message</span>
+              </button>
+              <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
+              <p class="order-footnote">Nothing is sent from this page. Copy the message and paste it wherever you normally place your order.</p>
+            </div>
+          </aside>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <span>Built from Catalogue 2026</span>
+        <span>Quantities are saved in this browser only</span>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
