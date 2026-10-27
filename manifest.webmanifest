@@ -1,0 +1,24 @@
+{
+  "name": "Nantel & McDiarmid Weekly Order",
+  "short_name": "Weekly Order",
+  "description": "Build and copy the weekly beverage order.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbfaf7",
+  "theme_color": "#16725c",
+  "icons": [
+    {
+      "src": "public/assets/icons/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "public/assets/icons/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
