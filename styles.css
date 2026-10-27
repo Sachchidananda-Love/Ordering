@@ -163,7 +163,7 @@ h2 { font-size: 30px; line-height: 1; margin-bottom: 0; }
   .site-header { height: 70px; }.header-note { display: none; }
   .hero { grid-template-columns: 1fr; min-height: 0; padding: 44px 0 46px; }.hero-art { height: 250px; max-width: 510px; }
   .catalogue-layout { grid-template-columns: 1fr; }.order-panel { order: -1; position: static; }.order-panel-inner { padding: 20px; }
-  .selected-list { max-height: 180px; }.catalogue-toolbar { align-items: start; flex-direction: column; }.search-box { width: 100%; }
+  .selected-list { height: 180px; max-height: 180px; }.catalogue-toolbar { align-items: start; flex-direction: column; }.search-box { width: 100%; }
   .category-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .category-button { min-height: 38px; padding: 8px 9px; line-height: 1.2; }
   .product-grid { grid-template-columns: 1fr; }

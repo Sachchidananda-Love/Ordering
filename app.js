@@ -80,12 +80,22 @@ const copyStatus = document.querySelector("#copy-status");
 
 function getQuantity(item) { return Math.max(0, Number.parseInt(quantities[item.code], 10) || 0); }
 
+function syncQuantityCard(item) {
+  const card = document.querySelector(`.product-card[data-code="${item.code}"]`);
+  if (!card) return;
+  const quantity = getQuantity(item);
+  card.classList.toggle("in-order", quantity > 0);
+  const input = card.querySelector("input[data-action=\"input\"]");
+  if (input) input.value = quantity;
+}
+
 function setQuantity(item, value) {
   const next = Math.max(0, Number.parseInt(value, 10) || 0);
   if (next === 0) delete quantities[item.code];
   else quantities[item.code] = next;
   localStorage.setItem("weekly-order-quantities", JSON.stringify(quantities));
-  renderAll();
+  syncQuantityCard(item);
+  renderSummary();
 }
 
 function matches(item) {
@@ -195,7 +205,12 @@ sectionsEl.addEventListener("change", event => {
 document.querySelector("#clear-order").addEventListener("click", () => {
   Object.keys(quantities).forEach(key => delete quantities[key]);
   localStorage.removeItem("weekly-order-quantities");
-  renderAll();
+  document.querySelectorAll(".product-card").forEach(card => {
+    card.classList.remove("in-order");
+    const input = card.querySelector("input[data-action=\"input\"]");
+    if (input) input.value = 0;
+  });
+  renderSummary();
 });
 
 async function copyOrder() {
