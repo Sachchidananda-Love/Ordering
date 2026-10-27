@@ -14,7 +14,12 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; overflow-x: hidden; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  /* Prevent accidental double-tap zoom while keeping normal scrolling and pinch zoom. */
+  touch-action: manipulation;
+}
 
 body {
   margin: 0;
@@ -27,6 +32,7 @@ body {
 }
 
 button, input, textarea { font: inherit; }
+button, input, textarea, a { touch-action: manipulation; }
 button { cursor: pointer; }
 
 .page-shell { max-width: 1440px; margin: 0 auto; padding: 0 42px; }
@@ -139,6 +145,7 @@ h2 { font-size: 30px; line-height: 1; margin-bottom: 0; }
 #order-message:focus { border-color: var(--mint-strong); box-shadow: 0 0 0 3px rgba(22,114,92,.1); }
 .copy-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; margin-top: 12px; border: 0; border-radius: 12px; background: var(--ink); color: white; font-size: 12px; font-weight: 700; transition: transform .15s, background .15s; }
 .copy-button:hover { background: var(--mint-strong); transform: translateY(-1px); }.copy-button.copied { background: var(--mint-strong); }.copy-icon { font-size: 15px; }
+.mobile-copy-button { display: none; }
 .copy-status { min-height: 17px; margin: 7px 0 0; color: var(--mint-strong); text-align: center; font-size: 10px; font-weight: 700; }
 .order-footnote { margin: 6px 0 0; color: #789083; font-size: 10px; line-height: 1.4; text-align: center; }
 
@@ -163,6 +170,19 @@ h2 { font-size: 30px; line-height: 1; margin-bottom: 0; }
   .product-card { grid-template-columns: 112px minmax(0, 1fr); }
   .product-visual { min-height: 174px; }
   .product-visual img { height: 154px; }
+  .mobile-copy-button {
+    position: fixed;
+    right: max(15px, env(safe-area-inset-right));
+    bottom: max(15px, env(safe-area-inset-bottom));
+    z-index: 10;
+    display: flex;
+    width: auto;
+    min-height: 46px;
+    margin: 0;
+    padding: 0 16px;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(22, 33, 30, .22);
+  }
 }
 
 @media (max-width: 540px) {

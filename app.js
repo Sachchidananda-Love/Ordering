@@ -75,7 +75,7 @@ const resultsNoteEl = document.querySelector("#results-note");
 const selectedListEl = document.querySelector("#selected-list");
 const totalUnitsEl = document.querySelector("#total-units");
 const messageEl = document.querySelector("#order-message");
-const copyButton = document.querySelector("#copy-order");
+const copyButtons = document.querySelectorAll("#copy-order, #copy-order-mobile");
 const copyStatus = document.querySelector("#copy-status");
 
 function getQuantity(item) { return Math.max(0, Number.parseInt(quantities[item.code], 10) || 0); }
@@ -198,7 +198,7 @@ document.querySelector("#clear-order").addEventListener("click", () => {
   renderAll();
 });
 
-copyButton.addEventListener("click", async () => {
+async function copyOrder() {
   try {
     await navigator.clipboard.writeText(messageEl.value);
   } catch {
@@ -206,14 +206,20 @@ copyButton.addEventListener("click", async () => {
     document.execCommand("copy");
     messageEl.setSelectionRange(0, 0);
   }
-  copyButton.classList.add("copied");
-  copyButton.querySelector("span:last-child").textContent = "Copied to clipboard";
+  copyButtons.forEach(button => {
+    button.classList.add("copied");
+    button.querySelector("span:last-child").textContent = "Copied to clipboard";
+  });
   copyStatus.textContent = "Ready to paste into your usual order channel.";
   window.setTimeout(() => {
-    copyButton.classList.remove("copied");
-    copyButton.querySelector("span:last-child").textContent = "Copy order message";
+    copyButtons.forEach(button => {
+      button.classList.remove("copied");
+      button.querySelector("span:last-child").textContent = button.id === "copy-order-mobile" ? "Copy email" : "Copy order message";
+    });
     copyStatus.textContent = "";
   }, 2200);
-});
+}
+
+copyButtons.forEach(button => button.addEventListener("click", copyOrder));
 
 renderAll();
