@@ -96,10 +96,20 @@
 
               <label class="message-label" for="order-message">Order message</label>
               <textarea id="order-message" readonly spellcheck="false"></textarea>
-              <button class="copy-button" id="copy-order" type="button">
-                <span class="copy-icon">▣</span>
-                <span>Copy order message</span>
-              </button>
+              <div class="copy-actions" id="copy-actions">
+                <button class="copy-button" id="copy-order" type="button" data-copy-recipient="nantel">
+                  <span class="copy-icon">▣</span>
+                  <span>Copy Nantel Email</span>
+                </button>
+                <button class="copy-button conditional-copy-button" id="copy-order-boudreault" type="button" data-copy-recipient="boudreault" hidden>
+                  <span class="copy-icon">▣</span>
+                  <span>Copy Boudreault Email</span>
+                </button>
+                <button class="copy-button conditional-copy-button" id="copy-order-olivia" type="button" data-copy-recipient="olivia" hidden>
+                  <span class="copy-icon">▣</span>
+                  <span>Copy Olivia Email</span>
+                </button>
+              </div>
               <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
               <p class="order-footnote">Nothing is sent from this page. Copy the message and paste it wherever you normally place your order.</p>
             </div>
@@ -112,10 +122,20 @@
         <span>Quantities are saved in this browser only</span>
       </footer>
 
-      <button class="copy-button mobile-copy-button" id="copy-order-mobile" type="button">
-        <span class="copy-icon">▣</span>
-        <span>Copy email</span>
-      </button>
+      <div class="mobile-copy-actions" id="mobile-copy-actions">
+        <button class="copy-button mobile-copy-button" id="copy-order-mobile" type="button" data-copy-recipient="nantel">
+          <span class="copy-icon">▣</span>
+          <span>Copy Nantel Email</span>
+        </button>
+        <button class="copy-button mobile-copy-button conditional-copy-button" id="copy-order-mobile-boudreault" type="button" data-copy-recipient="boudreault" hidden>
+          <span class="copy-icon">▣</span>
+          <span>Copy Boudreault Email</span>
+        </button>
+        <button class="copy-button mobile-copy-button conditional-copy-button" id="copy-order-mobile-olivia" type="button" data-copy-recipient="olivia" hidden>
+          <span class="copy-icon">▣</span>
+          <span>Copy Olivia Email</span>
+        </button>
+      </div>
     </div>
 
     <script src="app.js"></script>

@@ -57,13 +57,32 @@ const products = [
   { category: "Chai", brand: "Say When", code: "801020", name: "Chai bio authentique", detail: "12 × 32 oz", image: "801020" },
 ];
 
-const supplies = [
+const existingSupplies = [
   "8 Oz Hot Drink To Go Cups", "10 Oz Hot Drink To Go Cups", "12 Oz Hot Drink To Go Cups",
   "12 Oz Cold Drink To Go Cups", "16 Oz Cold Drink To Go Cups", "Hot Drink To Go Lids",
   "Cold Drink To Go Lids", "Vanilla 1883", "Hot drink sleeves",
-].map((name, index) => ({ category: "Supplies", brand: "Supplies", code: `supply-${index}`, name, detail: "no catalogue image", image: null, unit: "box" }));
+];
 
-const allItems = [...products, ...supplies];
+const boudreaultSupplies = [
+  "Pampak # 1 sml togo", "pampak #3 lrg togo", "Coffee Caraf", "lrg handle bags",
+  "sml handle bags", "partry sml greeseproof", "forks", "knife", "spoon",
+  "brown napkin (dispenser)", "White swan dinner napkin", "Sanitizer  quat plus",
+  "floor cleaner (neutraliozer)", "hand towel", "roll ups papers", "Blu Lite Dustbane",
+  "sweetener",
+];
+
+const oliviaSupplies = ["Toilet paper", "Brown sugar"];
+
+const supplies = [
+  ...existingSupplies.map(name => ({ name, recipient: "nantel" })),
+  ...boudreaultSupplies.map(name => ({ name, recipient: "boudreault" })),
+  ...oliviaSupplies.map(name => ({ name, recipient: "olivia" })),
+].map(({ name, recipient }, index) => ({
+  category: "Supplies", brand: "Supplies", code: `supply-${index}`, name,
+  detail: "no catalogue image", image: null, unit: "box", recipient,
+}));
+
+const allItems = [...products.map(item => ({ ...item, recipient: "nantel" })), ...supplies];
 const categories = [...new Set(allItems.map(item => item.category))];
 const quantities = JSON.parse(localStorage.getItem("weekly-order-quantities") || "{}");
 let activeCategory = "All products";
@@ -75,7 +94,7 @@ const resultsNoteEl = document.querySelector("#results-note");
 const selectedListEl = document.querySelector("#selected-list");
 const totalUnitsEl = document.querySelector("#total-units");
 const messageEl = document.querySelector("#order-message");
-const copyButtons = document.querySelectorAll("#copy-order, #copy-order-mobile");
+const copyButtons = document.querySelectorAll("[data-copy-recipient]");
 const copyStatus = document.querySelector("#copy-status");
 
 function getQuantity(item) { return Math.max(0, Number.parseInt(quantities[item.code], 10) || 0); }
@@ -98,6 +117,12 @@ function setQuantity(item, value) {
   renderSummary();
 }
 
+function categoryThumbnail(category) {
+  const item = allItems.find(candidate => candidate.category === category && candidate.image);
+  if (!item) return `<span class="category-thumb category-thumb-placeholder" aria-hidden="true">✦</span>`;
+  return `<img class="category-thumb" src="public/assets/products/${item.image}.png" alt="" />`;
+}
+
 function matches(item) {
   const categoryMatches = activeCategory === "All products" || item.category === activeCategory;
   const haystack = `${item.name} ${item.code} ${item.brand} ${item.category}`.toLowerCase();
@@ -106,7 +131,10 @@ function matches(item) {
 
 function renderNav() {
   navEl.innerHTML = ["All products", ...categories].map(category => `
-    <button class="category-button ${category === activeCategory ? "active" : ""}" type="button" data-category="${category}">${category}</button>
+    <button class="category-button ${category === activeCategory ? "active" : ""}" type="button" data-category="${category}">
+      ${categoryThumbnail(category)}
+      <span>${category}</span>
+    </button>
   `).join("");
 }
 
@@ -153,11 +181,28 @@ function renderProducts() {
   }).join("");
 }
 
-function orderLines() {
-  return allItems.filter(item => getQuantity(item) > 0).map(item => {
+function orderLines(items = allItems) {
+  return items.filter(item => getQuantity(item) > 0).map(item => {
     const unit = item.unit || "case";
     if (item.code.startsWith("supply-")) return `${getQuantity(item)} x ${unit} ${item.name.toLowerCase()}`;
     return `${getQuantity(item)} x ${unit} — ${item.code} — ${item.name}`;
+  });
+}
+
+function emailMessage(recipient) {
+  const lines = orderLines(allItems.filter(item => item.recipient === recipient));
+  const intro = recipient === "nantel"
+    ? "Bonjour, voici la commande cette semaine, merci!"
+    : "Hey man, here's an order for this week,";
+  return [intro, "", ...lines].join("\n");
+}
+
+function updateCopyButtons() {
+  const selectedRecipients = new Set(allItems.filter(item => getQuantity(item) > 0).map(item => item.recipient));
+  ["nantel", "boudreault", "olivia"].forEach(recipient => {
+    document.querySelectorAll(`[data-copy-recipient="${recipient}"]`).forEach(button => {
+      button.hidden = !selectedRecipients.has(recipient);
+    });
   });
 }
 
@@ -168,11 +213,16 @@ function renderSummary() {
   selectedListEl.innerHTML = selected.length ? selected.map(item => `
     <div class="selected-item"><div class="selected-item-name"><strong>${item.name}</strong><span>${item.code.startsWith("supply-") ? "Supply" : item.code}</span></div><span class="selected-item-qty">× ${getQuantity(item)}</span></div>
   `).join("") : `<div class="empty-state"><span class="empty-icon">＋</span><p>Your order is empty.</p><small>Use the quantity controls to add products.</small></div>`;
-  const lines = orderLines();
-  messageEl.value = ["Bonjour, voici la commande cette semaine, merci!", "", ...lines].join("\n");
+  messageEl.value = emailMessage("nantel");
+  updateCopyButtons();
 }
 
-function renderAll() { renderNav(); renderProducts(); renderSummary(); }
+function renderAll() {
+  renderNav();
+  renderProducts();
+  renderSummary();
+  document.querySelector("#catalogue-count").textContent = allItems.length;
+}
 
 navEl.addEventListener("click", event => {
   const button = event.target.closest("[data-category]");
@@ -213,23 +263,29 @@ document.querySelector("#clear-order").addEventListener("click", () => {
   renderSummary();
 });
 
-async function copyOrder() {
+async function copyOrder(event) {
+  const recipient = event.currentTarget.dataset.copyRecipient;
+  const recipientButtons = [...copyButtons].filter(button => button.dataset.copyRecipient === recipient);
+  const message = emailMessage(recipient);
   try {
-    await navigator.clipboard.writeText(messageEl.value);
+    await navigator.clipboard.writeText(message);
   } catch {
+    const previousMessage = messageEl.value;
+    messageEl.value = message;
     messageEl.select();
     document.execCommand("copy");
     messageEl.setSelectionRange(0, 0);
+    messageEl.value = previousMessage;
   }
-  copyButtons.forEach(button => {
+  recipientButtons.forEach(button => {
     button.classList.add("copied");
     button.querySelector("span:last-child").textContent = "Copied to clipboard";
   });
-  copyStatus.textContent = "Ready to paste into your usual order channel.";
+  copyStatus.textContent = `Ready to paste the ${recipient} email.`;
   window.setTimeout(() => {
-    copyButtons.forEach(button => {
+    recipientButtons.forEach(button => {
       button.classList.remove("copied");
-      button.querySelector("span:last-child").textContent = button.id === "copy-order-mobile" ? "Copy email" : "Copy order message";
+      button.querySelector("span:last-child").textContent = `Copy ${recipient[0].toUpperCase()}${recipient.slice(1)} Email`;
     });
     copyStatus.textContent = "";
   }, 2200);
