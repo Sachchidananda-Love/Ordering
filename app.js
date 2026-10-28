@@ -93,7 +93,6 @@ const navEl = document.querySelector("#category-nav");
 const resultsNoteEl = document.querySelector("#results-note");
 const selectedListEl = document.querySelector("#selected-list");
 const totalUnitsEl = document.querySelector("#total-units");
-const messageEl = document.querySelector("#order-message");
 const emailButtons = document.querySelectorAll("[data-copy-recipient]");
 
 function getQuantity(item) { return Math.max(0, Number.parseInt(quantities[item.code], 10) || 0); }
@@ -229,7 +228,6 @@ function renderSummary() {
   selectedListEl.innerHTML = selected.length ? selected.map(item => `
     <div class="selected-item"><div class="selected-item-name"><strong>${item.name}</strong><span>${item.code.startsWith("supply-") ? "Supply" : item.code}</span></div><span class="selected-item-qty">× ${getQuantity(item)}</span></div>
   `).join("") : `<div class="empty-state"><span class="empty-icon">＋</span><p>Your order is empty.</p><small>Use the quantity controls to add products.</small></div>`;
-  messageEl.value = emailMessage("nantel");
   updateCopyButtons();
 }
 

@@ -143,10 +143,6 @@ h2 { font-size: 30px; line-height: 1; margin-bottom: 0; }
 .selected-item { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 7px 0; }
 .selected-item-name { min-width: 0; font-size: 11px; line-height: 1.25; }.selected-item-name strong { display: block; font-size: 11px; }.selected-item-name span { color: var(--muted); font-size: 9px; }
 .selected-item-qty { color: var(--mint-strong); font-size: 12px; font-weight: 700; white-space: nowrap; }
-.message-label { display: block; margin: 18px 0 7px; color: var(--ink); font-size: 11px; font-weight: 700; }
-#order-message { width: 100%; min-height: 181px; resize: vertical; padding: 12px; border: 1px solid #c9dbcf; border-radius: 12px; outline: 0; background: rgba(255,255,255,.72); color: #33423a; font: 11px/1.55 "DM Sans", sans-serif; }
-#order-message:focus { border-color: var(--mint-strong); box-shadow: 0 0 0 3px rgba(22,114,92,.1); }
-.copy-actions { display: grid; gap: 8px; margin-top: 12px; }
 .copy-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; margin-top: 0; border: 0; border-radius: 12px; background: var(--ink); color: white; font-size: 12px; font-weight: 700; transition: transform .15s, background .15s; }
 .copy-button:hover { background: var(--mint-strong); transform: translateY(-1px); }.copy-button.copied { background: var(--mint-strong); }.copy-icon { font-size: 15px; }
 .copy-button[hidden] { display: none !important; }
@@ -171,9 +167,6 @@ h2 { font-size: 30px; line-height: 1; margin-bottom: 0; }
   box-shadow: 0 7px 20px rgba(22, 33, 30, .2);
   font-size: 11px;
 }
-.copy-status { min-height: 17px; margin: 7px 0 0; color: var(--mint-strong); text-align: center; font-size: 10px; font-weight: 700; }
-.order-footnote { margin: 6px 0 0; color: #789083; font-size: 10px; line-height: 1.4; text-align: center; }
-
 .site-footer { display: flex; justify-content: space-between; gap: 20px; padding: 20px 0 34px; border-top: 1px solid var(--line); color: #87938b; font-size: 10px; }
 
 @media (max-width: 1050px) {
@@ -222,7 +215,7 @@ h2 { font-size: 30px; line-height: 1; margin-bottom: 0; }
   .product-info { padding: 14px 12px 12px; }.product-name { font-size: 14px; }.product-detail { font-size: 10px; }
   .quantity-control { height: 34px; }.quantity-control button { width: 32px; font-size: 18px; }.quantity-control input { width: 42px; font-size: 13px; }.unit-label { font-size: 10px; }
   .order-panel-inner { padding: 17px; border-radius: 19px; }.order-panel h2 { font-size: 23px; }.order-total { padding: 17px 0 14px; }.order-total strong { font-size: 40px; }
-  #order-message { min-height: 170px; font-size: 10px; }.copy-button { min-height: 46px; }
+  .copy-button { min-height: 46px; }
   .site-footer { flex-direction: column; gap: 5px; }
 }
 
