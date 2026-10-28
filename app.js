@@ -94,8 +94,7 @@ const resultsNoteEl = document.querySelector("#results-note");
 const selectedListEl = document.querySelector("#selected-list");
 const totalUnitsEl = document.querySelector("#total-units");
 const messageEl = document.querySelector("#order-message");
-const copyButtons = document.querySelectorAll("[data-copy-recipient]");
-const copyStatus = document.querySelector("#copy-status");
+const emailButtons = document.querySelectorAll("[data-copy-recipient]");
 
 function getQuantity(item) { return Math.max(0, Number.parseInt(quantities[item.code], 10) || 0); }
 
@@ -197,6 +196,23 @@ function emailMessage(recipient) {
   return [intro, "", ...lines].join("\n");
 }
 
+const emailDetails = {
+  nantel: { to: "commandes@nantelmcdiarmid.com", subject: "Commande Cafe Palmier" },
+  boudreault: { to: "Luc.Lessard@imperialdade.com", subject: "Order Cafe Palmier" },
+  olivia: { to: "olivia@cafepalmier.ca", subject: "Order Cafe Palmier" },
+};
+
+function emailHref(recipient) {
+  const details = emailDetails[recipient];
+  const lines = orderLines(allItems.filter(item => item.recipient === recipient));
+  const subject = recipient === "olivia" && lines.length
+    ? `${details.subject} — ${lines.join(", ")}`
+    : details.subject;
+  const params = [`subject=${encodeURIComponent(subject)}`];
+  if (recipient !== "olivia") params.push(`body=${encodeURIComponent(emailMessage(recipient))}`);
+  return `mailto:${details.to}?${params.join("&")}`;
+}
+
 function updateCopyButtons() {
   const selectedRecipients = new Set(allItems.filter(item => getQuantity(item) > 0).map(item => item.recipient));
   ["nantel", "boudreault", "olivia"].forEach(recipient => {
@@ -263,34 +279,11 @@ document.querySelector("#clear-order").addEventListener("click", () => {
   renderSummary();
 });
 
-async function copyOrder(event) {
+function sendEmail(event) {
   const recipient = event.currentTarget.dataset.copyRecipient;
-  const recipientButtons = [...copyButtons].filter(button => button.dataset.copyRecipient === recipient);
-  const message = emailMessage(recipient);
-  try {
-    await navigator.clipboard.writeText(message);
-  } catch {
-    const previousMessage = messageEl.value;
-    messageEl.value = message;
-    messageEl.select();
-    document.execCommand("copy");
-    messageEl.setSelectionRange(0, 0);
-    messageEl.value = previousMessage;
-  }
-  recipientButtons.forEach(button => {
-    button.classList.add("copied");
-    button.querySelector("span:last-child").textContent = "Copied to clipboard";
-  });
-  copyStatus.textContent = `Ready to paste the ${recipient} email.`;
-  window.setTimeout(() => {
-    recipientButtons.forEach(button => {
-      button.classList.remove("copied");
-      button.querySelector("span:last-child").textContent = `Copy ${recipient[0].toUpperCase()}${recipient.slice(1)} Email`;
-    });
-    copyStatus.textContent = "";
-  }, 2200);
+  window.location.href = emailHref(recipient);
 }
 
-copyButtons.forEach(button => button.addEventListener("click", copyOrder));
+emailButtons.forEach(button => button.addEventListener("click", sendEmail));
 
 renderAll();
