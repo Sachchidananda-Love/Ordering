@@ -57,36 +57,51 @@ const products = [
   { category: "Chai", brand: "Say When", code: "801020", name: "Chai bio authentique", detail: "12 × 32 oz", image: "801020" },
 ];
 
-const existingSupplies = [
-  "8 Oz Hot Drink To Go Cups", "10 Oz Hot Drink To Go Cups", "12 Oz Hot Drink To Go Cups",
-  "12 Oz Cold Drink To Go Cups", "16 Oz Cold Drink To Go Cups", "Hot Drink To Go Lids",
-  "Cold Drink To Go Lids", "Vanilla 1883", "Hot drink sleeves",
-];
-
-const boudreaultSupplies = [
-  "Pampak # 1 sml togo", "pampak #3 lrg togo", "Coffee Caraf", "lrg handle bags",
-  "sml handle bags", "partry sml greeseproof", "forks", "knife", "spoon",
-  "brown napkin (dispenser)", "White swan dinner napkin", "Sanitizer  quat plus",
-  "floor cleaner (neutraliozer)", "hand towel", "roll ups papers", "Blu Lite Dustbane",
-  "sweetener",
-];
-
-const oliviaSupplies = ["Toilet paper", "Brown sugar"];
-
 const supplies = [
-  ...existingSupplies.map(name => ({ name, recipient: "nantel" })),
-  ...boudreaultSupplies.map(name => ({ name, recipient: "boudreault" })),
-  ...oliviaSupplies.map(name => ({ name, recipient: "olivia" })),
-].map(({ name, recipient }, index) => ({
-  category: "Supplies", brand: "Supplies", code: `supply-${index}`, name,
-  detail: "no catalogue image", image: null, unit: "box", recipient,
+  { category: "Shed", name: "Knives", code: "supply-16", recipient: "boudreault" },
+  { category: "Shed", name: "Forks", code: "supply-15", recipient: "boudreault" },
+  { category: "Shed", name: "Spoons", code: "supply-17", recipient: "boudreault" },
+  { category: "Shed", name: "Coffee caraf", code: "supply-11", recipient: "boudreault" },
+  { category: "Shed", name: "8 Oz Hot Drink To Go Cups", code: "supply-0", recipient: "boudreault" },
+  { category: "Shed", name: "10 Oz Hot Drink To Go Cups", code: "supply-1", recipient: "boudreault" },
+  { category: "Shed", name: "12 Oz Hot Drink To Go Cups", code: "supply-2", recipient: "boudreault" },
+  { category: "Shed", name: "12 Oz Cold Drink To Go Cups", code: "supply-3", recipient: "boudreault" },
+  { category: "Shed", name: "16 Oz Cold Drink To Go Cups", code: "supply-4", recipient: "boudreault" },
+  { category: "Shed", name: "Hot Drink To Go Lids", code: "supply-5", recipient: "boudreault" },
+  { category: "Shed", name: "Cold Drink To Go Lids", code: "supply-6", recipient: "boudreault" },
+  { category: "Shed", name: "Straws", code: "supply-28", recipient: "boudreault" },
+  { category: "Shed", name: "Sleeves", code: "supply-8", recipient: "boudreault" },
+  { category: "Shed", name: "Sweetener", code: "supply-25", recipient: "boudreault" },
+  { category: "Shed", name: "Brown sugar", code: "supply-27", recipient: "olivia" },
+  { category: "Shed", name: "Pampak # 1 sml togo", code: "supply-9", recipient: "boudreault" },
+  { category: "Shed", name: "Pampak #3 lrg togo", code: "supply-10", recipient: "boudreault" },
+  { category: "Closet", name: "Large pastry bags", code: "supply-12", recipient: "olivia" },
+  { category: "Closet", name: "Small Greeseroof Sandwhich Bags", code: "supply-30", recipient: "boudreault" },
+  { category: "Bulk Head", name: "Vanilla 1883", code: "supply-7", recipient: "boudreault" },
+  { category: "Bulk Head", name: "Roll up papers", emailName: "White Napkin Bands", code: "supply-23", recipient: "boudreault" },
+  { category: "Bulk Head", name: "Small window pastry boxes", code: "supply-29", recipient: "boudreault" },
+  { category: "Bathrooms", name: "Neutralizer (floor)", code: "supply-21", recipient: "boudreault" },
+  { category: "Bathrooms", name: "Sanitizer", code: "supply-20", recipient: "boudreault" },
+  { category: "Bathrooms", name: "Toilet paper", code: "supply-26", recipient: "olivia" },
+  { category: "Bathrooms", name: "Hand towel", code: "supply-22", recipient: "boudreault" },
+].map(item => ({ ...item, brand: item.category, detail: "no catalogue image", image: null, unit: "box" }));
+
+const milkAndSyrupCategories = new Set(["Milks", "Chai"]);
+const catalogueProducts = products.map(item => ({
+  ...item,
+  category: milkAndSyrupCategories.has(item.category) ? "Milks + Syrups" : "Drinks",
+  drinkGroup: milkAndSyrupCategories.has(item.category) ? "Milks + Syrups" : item.category,
+  recipient: "nantel",
 }));
 
-const allItems = [...products.map(item => ({ ...item, recipient: "nantel" })), ...supplies];
+const allItems = [...catalogueProducts, ...supplies];
 const categories = [...new Set(allItems.map(item => item.category))];
 const quantities = JSON.parse(localStorage.getItem("weekly-order-quantities") || "{}");
 let activeCategory = "All products";
 let searchTerm = "";
+const drinkGroupState = {};
+let activeDrinkGroup = "";
+let drinkScrollTrackingBound = false;
 
 const sectionsEl = document.querySelector("#product-sections");
 const navEl = document.querySelector("#category-nav");
@@ -116,14 +131,34 @@ function setQuantity(item, value) {
 }
 
 function categoryThumbnail(category) {
+  const sectionIcons = {
+    Shed: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 4l9 6.5"/><path d="M5.5 9.5V20h13V9.5M9 20v-5.5h6V20"/></svg>`,
+    Closet: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="3.5" width="15" height="17" rx="1.5"/><path d="M12 3.5v17M10 8.5h.01M14 8.5h.01"/></svg>`,
+    "Bulk Head": `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-3 8 3-8 3-8-3Z"/><path d="M4 7v10l8 3 8-3V7M12 10v10"/></svg>`,
+    Bathrooms: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M6 12v3a5 5 0 0 0 5 5h2a5 5 0 0 0 5-5v-3"/><path d="M7 12V6a2 2 0 0 1 4 0v1M11 7h3"/></svg>`,
+  };
+  if (sectionIcons[category]) return `<span class="category-thumb category-icon" aria-hidden="true">${sectionIcons[category]}</span>`;
   const item = allItems.find(candidate => candidate.category === category && candidate.image);
   if (!item) return `<span class="category-thumb category-thumb-placeholder" aria-hidden="true">✦</span>`;
   return `<img class="category-thumb" src="public/assets/products/${item.image}.png" alt="" />`;
 }
 
+function slugify(value) { return value.toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
+
+function drinkThumbnail(group) {
+  const item = allItems.find(candidate => candidate.drinkGroup === group && candidate.image);
+  if (!item) return `<span class="drink-thumb drink-thumb-placeholder" aria-hidden="true">✦</span>`;
+  return `<img class="drink-thumb" src="public/assets/products/${item.image}.png" alt="" />`;
+}
+
+function syncStickyOffsets() {
+  const categoryNav = document.querySelector("#category-nav");
+  if (categoryNav) document.documentElement.style.setProperty("--category-nav-height", `${categoryNav.offsetHeight}px`);
+}
+
 function matches(item) {
   const categoryMatches = activeCategory === "All products" || item.category === activeCategory;
-  const haystack = `${item.name} ${item.code} ${item.brand} ${item.category}`.toLowerCase();
+  const haystack = `${item.name} ${item.code} ${item.brand} ${item.category} ${item.drinkGroup || ""}`.toLowerCase();
   return categoryMatches && haystack.includes(searchTerm.toLowerCase());
 }
 
@@ -134,6 +169,7 @@ function renderNav() {
       <span>${category}</span>
     </button>
   `).join("");
+  syncStickyOffsets();
 }
 
 function renderProduct(item) {
@@ -162,27 +198,114 @@ function renderProduct(item) {
   `;
 }
 
+function renderDrinkSection(items) {
+  const visibleGroups = [...new Set(items.map(item => item.drinkGroup))];
+  if (!visibleGroups.includes(activeDrinkGroup)) activeDrinkGroup = visibleGroups[0] || "";
+  const drinkNav = `
+    <nav class="drink-subnav" id="drink-subnav" aria-label="Drink sections">
+      ${visibleGroups.map(group => `
+        <button class="drink-subnav-button ${group === activeDrinkGroup ? "active" : ""}" type="button" data-drink-group="${group}">
+          ${drinkThumbnail(group)}
+          <span>${group}</span>
+        </button>
+      `).join("")}
+    </nav>
+  `;
+  const groups = visibleGroups.map(group => {
+    const groupItems = items.filter(item => item.drinkGroup === group);
+    const isOpen = drinkGroupState[group] !== false;
+    return `
+      <section class="drink-group ${isOpen ? "is-open" : ""}" id="drink-group-${slugify(group)}" data-drink-group="${group}">
+        <button class="drink-group-toggle" type="button" data-toggle-drink-group="${group}" aria-expanded="${isOpen}">
+          <span class="drink-group-title">
+            <span><strong>${group}</strong><small>${groupItems.length} item${groupItems.length === 1 ? "" : "s"}</small></span>
+          </span>
+          <span class="drink-group-chevron" aria-hidden="true">${isOpen ? "⌃" : "⌄"}</span>
+        </button>
+        <div class="drink-group-content" ${isOpen ? "" : "hidden"}>
+          <div class="product-grid">${groupItems.map(renderProduct).join("")}</div>
+        </div>
+      </section>
+    `;
+  }).join("");
+  return `<section class="product-section product-section-drinks" id="drinks">
+    <div class="product-section-heading"><h3>Drinks</h3><span>${items.length} items</span></div>
+    ${drinkNav}
+    <div class="drink-groups">${groups}</div>
+  </section>`;
+}
+
+function renderStandardSection(category, items) {
+  return `<section class="product-section" id="${slugify(category)}">
+    <div class="product-section-heading"><h3>${category}</h3><span>${items.length} item${items.length === 1 ? "" : "s"}</span></div>
+    <div class="product-grid">${items.map(renderProduct).join("")}</div>
+  </section>`;
+}
+
+function setActiveDrinkGroup(group, shouldScroll = true) {
+  const nav = document.querySelector("#drink-subnav");
+  const buttons = [...document.querySelectorAll("#drink-subnav [data-drink-group]")];
+  const button = buttons.find(candidate => candidate.dataset.drinkGroup === group);
+  if (!nav || !button) return;
+  const changed = activeDrinkGroup !== group;
+  if (changed) {
+    activeDrinkGroup = group;
+    buttons.forEach(candidate => candidate.classList.toggle("active", candidate === button));
+  }
+  if (shouldScroll && changed) {
+    const left = button.offsetLeft - (nav.clientWidth - button.offsetWidth) / 2;
+    nav.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  }
+}
+
+function updateActiveDrinkGroup() {
+  const groups = [...document.querySelectorAll(".drink-group")];
+  if (!groups.length) return;
+  const nav = document.querySelector("#drink-subnav");
+  const marker = Math.max(150, (nav?.getBoundingClientRect().bottom || 0) + 18);
+  let current = groups[0];
+  groups.forEach(group => {
+    if (group.getBoundingClientRect().top <= marker) current = group;
+  });
+  setActiveDrinkGroup(current.dataset.drinkGroup, true);
+}
+
+function setupDrinkGroupTracking() {
+  if (!drinkScrollTrackingBound) {
+    window.addEventListener("scroll", updateActiveDrinkGroup, { passive: true });
+    window.addEventListener("resize", () => {
+      syncStickyOffsets();
+      updateActiveDrinkGroup();
+    });
+    drinkScrollTrackingBound = true;
+  }
+  syncStickyOffsets();
+  updateActiveDrinkGroup();
+}
+
 function renderProducts() {
   const visible = allItems.filter(matches);
   resultsNoteEl.textContent = searchTerm || activeCategory !== "All products" ? `${visible.length} product${visible.length === 1 ? "" : "s"} shown` : "";
   if (!visible.length) {
     sectionsEl.innerHTML = `<div class="empty-state" style="padding: 60px 0"><span class="empty-icon">⌕</span><p>No products found.</p><small>Try another search or category.</small></div>`;
+    setupDrinkGroupTracking();
     return;
   }
   const visibleCategories = [...new Set(visible.map(item => item.category))];
   sectionsEl.innerHTML = visibleCategories.map(category => {
     const items = visible.filter(item => item.category === category);
-    return `<section class="product-section" id="${category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}">
-      <div class="product-section-heading"><h3>${category}</h3><span>${items.length} item${items.length === 1 ? "" : "s"}</span></div>
-      <div class="product-grid">${items.map(renderProduct).join("")}</div>
-    </section>`;
+    return category === "Drinks" ? renderDrinkSection(items) : renderStandardSection(category, items);
   }).join("");
+  setupDrinkGroupTracking();
 }
 
 function orderLines(items = allItems) {
   return items.filter(item => getQuantity(item) > 0).map(item => {
     const unit = item.unit || "case";
-    if (item.code.startsWith("supply-")) return `${getQuantity(item)} x ${unit} ${item.name.toLowerCase()}`;
+    if (item.code.startsWith("supply-")) {
+      const name = item.emailName || item.name.toLowerCase();
+      return `${getQuantity(item)} x ${unit} ${name}`;
+    }
     return `${getQuantity(item)} x ${unit} — ${item.code} — ${item.name}`;
   });
 }
@@ -236,6 +359,7 @@ function renderAll() {
   renderProducts();
   renderSummary();
   document.querySelector("#catalogue-count").textContent = allItems.length;
+  document.querySelector("#section-count").textContent = categories.length;
 }
 
 navEl.addEventListener("click", event => {
@@ -251,6 +375,37 @@ document.querySelector("#search").addEventListener("input", event => {
 });
 
 sectionsEl.addEventListener("click", event => {
+  const groupToggle = event.target.closest("[data-toggle-drink-group]");
+  if (groupToggle) {
+    const group = groupToggle.dataset.toggleDrinkGroup;
+    const groupSection = groupToggle.closest(".drink-group");
+    const isOpen = !groupSection.classList.contains("is-open");
+    drinkGroupState[group] = isOpen;
+    groupSection.classList.toggle("is-open", isOpen);
+    groupToggle.setAttribute("aria-expanded", String(isOpen));
+    groupToggle.querySelector(".drink-group-chevron").textContent = isOpen ? "⌃" : "⌄";
+    groupSection.querySelector(".drink-group-content").hidden = !isOpen;
+    updateActiveDrinkGroup();
+    return;
+  }
+
+  const drinkNavButton = event.target.closest("#drink-subnav [data-drink-group]");
+  if (drinkNavButton) {
+    const group = drinkNavButton.dataset.drinkGroup;
+    const groupSection = [...document.querySelectorAll(".drink-group")].find(section => section.dataset.drinkGroup === group);
+    if (!groupSection) return;
+    if (!groupSection.classList.contains("is-open")) {
+      drinkGroupState[group] = true;
+      groupSection.classList.add("is-open");
+      groupSection.querySelector(".drink-group-toggle").setAttribute("aria-expanded", "true");
+      groupSection.querySelector(".drink-group-chevron").textContent = "⌃";
+      groupSection.querySelector(".drink-group-content").hidden = false;
+    }
+    setActiveDrinkGroup(group, true);
+    groupSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
   const button = event.target.closest("button[data-code]");
   if (!button) return;
   const item = allItems.find(candidate => candidate.code === button.dataset.code);
