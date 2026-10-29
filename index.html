@@ -19,40 +19,7 @@
   </head>
   <body>
     <div class="page-shell">
-      <header class="site-header">
-        <a class="brand" href="#top" aria-label="Weekly order builder home">
-          <span class="brand-mark">N<span>&amp;</span>M</span>
-          <span>
-            <strong>Nantel &amp; McDiarmid</strong>
-            <small>Weekly order builder</small>
-          </span>
-        </a>
-        <div class="header-note"><span class="live-dot"></span> 2026 catalogue · draft order</div>
-      </header>
-
       <main id="top">
-        <section class="hero" aria-labelledby="page-title">
-          <div class="hero-copy">
-            <p class="eyebrow">The easy way to restock</p>
-            <h1 id="page-title">Build this week’s<br /><em>good stuff.</em></h1>
-            <p class="hero-intro">Choose your cases, adjust quantities with the arrows or your keyboard, and send a tidy email when you’re ready.</p>
-            <div class="hero-meta">
-              <span><b id="catalogue-count">82</b> catalogue products</span>
-              <span class="meta-separator">·</span>
-              <span><b id="section-count">6</b> collection sections</span>
-            </div>
-          </div>
-          <div class="hero-art" aria-hidden="true">
-            <div class="hero-ring hero-ring-one"></div>
-            <div class="hero-ring hero-ring-two"></div>
-            <div class="hero-can can-orange"><i>LOOP</i><b>orange<br />clementine</b></div>
-            <div class="hero-can can-green"><i>LOOP</i><b>deep<br />green</b></div>
-            <div class="hero-spark spark-one">✦</div>
-            <div class="hero-spark spark-two">✦</div>
-            <span class="hero-caption">fresh picks<br /><strong>for the week</strong></span>
-          </div>
-        </section>
-
         <section class="catalogue-layout" aria-label="Catalogue and order summary">
           <div class="catalogue-column">
             <div class="catalogue-toolbar">
@@ -86,6 +53,14 @@
                 <span>cases &amp; boxes selected</span>
               </div>
 
+              <div class="boudreault-total">
+                <div>
+                  <span>Boudreault priced subtotal</span>
+                  <small id="boudreault-shipping-note">Free shipping at $150.00</small>
+                </div>
+                <strong id="boudreault-total">$0.00</strong>
+              </div>
+
               <div class="selected-list" id="selected-list">
                 <div class="empty-state">
                   <span class="empty-icon">＋</span>
@@ -115,7 +90,7 @@
         </button>
         <button class="copy-button mobile-copy-button conditional-copy-button" id="copy-order-mobile-olivia" type="button" data-copy-recipient="olivia" hidden>
           <span class="copy-icon">➤</span>
-          <span>Send Olivia Email</span>
+          <span>Send Olivia/Costco Email</span>
         </button>
       </div>
     </div>

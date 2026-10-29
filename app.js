@@ -58,10 +58,10 @@ const products = [
 ];
 
 const supplies = [
-  { category: "Shed", name: "Knives", code: "supply-16", recipient: "boudreault" },
-  { category: "Shed", name: "Forks", code: "supply-15", recipient: "boudreault" },
-  { category: "Shed", name: "Spoons", code: "supply-17", recipient: "boudreault" },
-  { category: "Shed", name: "Coffee caraf", code: "supply-11", recipient: "boudreault" },
+  { category: "Shed", name: "Knives", code: "supply-16", recipient: "boudreault", price: 80.85 },
+  { category: "Shed", name: "Forks", code: "supply-15", recipient: "boudreault", price: 80.85 },
+  { category: "Shed", name: "Spoons", code: "supply-17", recipient: "boudreault", price: 80.85 },
+  { category: "Shed", name: "Coffee caraf", code: "supply-11", recipient: "boudreault", price: 169.87 },
   { category: "Shed", name: "8 Oz Hot Drink To Go Cups", code: "supply-0", recipient: "nantel" },
   { category: "Shed", name: "10 Oz Hot Drink To Go Cups", code: "supply-1", recipient: "nantel" },
   { category: "Shed", name: "12 Oz Hot Drink To Go Cups", code: "supply-2", recipient: "nantel" },
@@ -69,22 +69,29 @@ const supplies = [
   { category: "Shed", name: "16 Oz Cold Drink To Go Cups", code: "supply-4", recipient: "nantel" },
   { category: "Shed", name: "Hot Drink To Go Lids", code: "supply-5", recipient: "nantel" },
   { category: "Shed", name: "Cold Drink To Go Lids", code: "supply-6", recipient: "nantel" },
-  { category: "Shed", name: "Straws", code: "supply-28", recipient: "boudreault" },
+  { category: "Shed", name: "Straws", code: "supply-28", recipient: "olivia" },
   { category: "Shed", name: "Sleeves", code: "supply-8", recipient: "nantel" },
-  { category: "Shed", name: "Sweetener", code: "supply-25", recipient: "boudreault" },
+  { category: "Shed", name: "Sweetener", code: "supply-25", recipient: "boudreault", price: 47.59 },
   { category: "Shed", name: "Brown sugar", code: "supply-27", recipient: "olivia" },
-  { category: "Shed", name: "Pampak # 1 sml togo", code: "supply-9", recipient: "boudreault" },
-  { category: "Shed", name: "Pampak #3 lrg togo", code: "supply-10", recipient: "boudreault" },
+  { category: "Shed", name: "Pampak # 1 sml togo", code: "supply-9", recipient: "boudreault", price: 52.24 },
+  { category: "Shed", name: "Pampak #3 lrg togo", code: "supply-10", recipient: "boudreault", price: 51.91 },
+  { category: "Shed", name: "Coffee Trays", code: "supply-34", recipient: "nantel" },
+  { category: "Shed", name: "Small to go bowl", detail: "500 / case · 16 oz · 115mm", code: "supply-35", recipient: "boudreault", price: 48.98, unit: "case" },
+  { category: "Shed", name: "Large to go bowl", detail: "300 / case · 34 oz · 165mm", code: "supply-36", recipient: "boudreault", price: 47.48, unit: "case" },
+  { category: "Shed", name: "250ml Deli Container", detail: "240 / case · 8 oz", code: "supply-31", recipient: "boudreault", price: 36.87, unit: "case" },
+  { category: "Shed", name: "500ml Deli Container", detail: "240 / case · 16 oz", code: "supply-32", recipient: "boudreault", price: 41.64, unit: "case" },
+  { category: "Shed", name: "1l Deli Container", detail: "300 / case · 32 oz", code: "supply-33", recipient: "boudreault", price: 57.66, unit: "case" },
   { category: "Closet", name: "Large pastry bags", code: "supply-12", recipient: "olivia" },
-  { category: "Closet", name: "Small Greeseroof Sandwhich Bags", code: "supply-30", recipient: "boudreault" },
+  { category: "Closet", name: "Small Greeseroof Sandwhich Bags", code: "supply-30", recipient: "boudreault", price: 31.96 },
   { category: "Bulk Head", name: "Vanilla 1883", code: "supply-7", recipient: "nantel" },
-  { category: "Bulk Head", name: "Roll up papers", emailName: "White Napkin Bands", code: "supply-23", recipient: "boudreault" },
-  { category: "Bulk Head", name: "Small window pastry boxes", code: "supply-29", recipient: "boudreault" },
-  { category: "Bathrooms", name: "Neutralizer (floor)", code: "supply-21", recipient: "boudreault" },
-  { category: "Bathrooms", name: "Sanitizer", code: "supply-20", recipient: "boudreault" },
+  { category: "Bulk Head", name: "Roll up papers", emailName: "White Napkin Bands", code: "supply-23", recipient: "boudreault", price: 23.68 },
+  { category: "Bulk Head", name: "Large pastry box", detail: "50 / case · 15.5 × 11 × 4", code: "supply-37", recipient: "boudreault", price: 62.86, unit: "case" },
+  { category: "Bulk Head", name: "Small window pastry boxes", code: "supply-29", recipient: "boudreault", price: 38.48 },
+  { category: "Bathrooms", name: "Neutralizer (floor)", code: "supply-21", recipient: "boudreault", price: 21.34 },
+  { category: "Bathrooms", name: "Sanitizer", code: "supply-20", recipient: "boudreault", price: 25.41 },
   { category: "Bathrooms", name: "Toilet paper", code: "supply-26", recipient: "olivia" },
-  { category: "Bathrooms", name: "Hand towel", code: "supply-22", recipient: "boudreault" },
-].map(item => ({ ...item, brand: item.category, detail: "no catalogue image", image: null, unit: "box" }));
+  { category: "Bathrooms", name: "Hand towel", code: "supply-22", recipient: "boudreault", price: 41.20 },
+].map(item => ({ ...item, brand: item.category, detail: item.detail || "no catalogue image", image: null, unit: item.unit || "box" }));
 
 const milkAndSyrupCategories = new Set(["Milks", "Chai"]);
 const catalogueProducts = products.map(item => ({
@@ -108,9 +115,23 @@ const navEl = document.querySelector("#category-nav");
 const resultsNoteEl = document.querySelector("#results-note");
 const selectedListEl = document.querySelector("#selected-list");
 const totalUnitsEl = document.querySelector("#total-units");
+const boudreaultTotalEl = document.querySelector("#boudreault-total");
+const boudreaultShippingNoteEl = document.querySelector("#boudreault-shipping-note");
 const emailButtons = document.querySelectorAll("[data-copy-recipient]");
+const BOUDREAULT_SHIPPING_THRESHOLD = 150;
 
 function getQuantity(item) { return Math.max(0, Number.parseInt(quantities[item.code], 10) || 0); }
+function formatCurrency(value) { return `$${value.toFixed(2)}`; }
+function getRecipientItems(recipient) { return allItems.filter(item => item.recipient === recipient); }
+function getRecipientTotal(recipient) {
+  return getRecipientItems(recipient).reduce((sum, item) => sum + getQuantity(item) * (item.price || 0), 0);
+}
+function getBoudreaultShippingStatus() {
+  const selected = getRecipientItems("boudreault").filter(item => getQuantity(item) > 0);
+  const total = selected.reduce((sum, item) => sum + getQuantity(item) * (item.price || 0), 0);
+  const missingPrices = selected.filter(item => typeof item.price !== "number");
+  return { total, missingPrices, ready: total >= BOUDREAULT_SHIPPING_THRESHOLD && !missingPrices.length };
+}
 
 function syncQuantityCard(item) {
   const card = document.querySelector(`.product-card[data-code="${item.code}"]`);
@@ -184,6 +205,7 @@ function renderProduct(item) {
         <div class="product-brand">${item.brand}</div>
         <h4 class="product-name">${item.name}</h4>
         <div class="product-detail">${item.detail}</div>
+        ${item.recipient === "boudreault" ? `<div class="product-price">${typeof item.price === "number" ? `${formatCurrency(item.price)} / ${item.unit || "case"}` : "Price not listed"}</div>` : ""}
         ${item.code.startsWith("supply-") ? "" : `<div class="product-code">Code ${item.code}</div>`}
         <div class="quantity-row">
           <div class="quantity-control" aria-label="Quantity for ${item.name}">
@@ -337,20 +359,47 @@ function emailHref(recipient) {
 
 function updateCopyButtons() {
   const selectedRecipients = new Set(allItems.filter(item => getQuantity(item) > 0).map(item => item.recipient));
+  const shippingStatus = getBoudreaultShippingStatus();
   ["nantel", "boudreault", "olivia"].forEach(recipient => {
     document.querySelectorAll(`[data-copy-recipient="${recipient}"]`).forEach(button => {
       button.hidden = !selectedRecipients.has(recipient);
+      if (recipient === "boudreault") {
+        button.classList.toggle("boudreault-ready", shippingStatus.ready);
+        button.classList.toggle("boudreault-below-threshold", !shippingStatus.ready);
+      }
     });
   });
 }
 
+const recipientLabels = {
+  boudreault: "Boudreault",
+  nantel: "Nantel",
+  olivia: "Olivia/Costco",
+};
+
 function renderSummary() {
   const selected = allItems.filter(item => getQuantity(item) > 0);
   const totalUnits = selected.reduce((sum, item) => sum + getQuantity(item), 0);
+  const boudreaultStatus = getBoudreaultShippingStatus();
   totalUnitsEl.textContent = totalUnits;
-  selectedListEl.innerHTML = selected.length ? selected.map(item => `
-    <div class="selected-item"><div class="selected-item-name"><strong>${item.name}</strong><span>${item.code.startsWith("supply-") ? "Supply" : item.code}</span></div><span class="selected-item-qty">× ${getQuantity(item)}</span></div>
-  `).join("") : `<div class="empty-state"><span class="empty-icon">＋</span><p>Your order is empty.</p><small>Use the quantity controls to add products.</small></div>`;
+  boudreaultTotalEl.textContent = formatCurrency(boudreaultStatus.total);
+  boudreaultShippingNoteEl.textContent = boudreaultStatus.missingPrices.length
+    ? "Some Boudreault items have no listed price"
+    : boudreaultStatus.ready
+      ? "Free shipping threshold reached"
+      : `Free shipping at ${formatCurrency(BOUDREAULT_SHIPPING_THRESHOLD)}`;
+  const recipientOrder = ["boudreault", "nantel", "olivia"];
+  selectedListEl.innerHTML = `${recipientOrder.map(recipient => {
+    const recipientItems = selected.filter(item => item.recipient === recipient);
+    return `
+      <section class="order-recipient" aria-labelledby="recipient-${recipient}">
+        <h3 id="recipient-${recipient}">${recipientLabels[recipient]}</h3>
+        ${recipientItems.length ? recipientItems.map(item => `
+          <div class="selected-item"><div class="selected-item-name"><strong>${item.name}</strong><span>${typeof item.price === "number" ? `${formatCurrency(item.price)} / ${item.unit || "case"}` : item.code.startsWith("supply-") ? "Supply · price not listed" : item.code}</span></div><span class="selected-item-qty">× ${getQuantity(item)}</span></div>
+        `).join("") : `<p class="recipient-empty">No items selected</p>`}
+      </section>
+    `;
+  }).join("")}`;
   updateCopyButtons();
 }
 
@@ -358,8 +407,6 @@ function renderAll() {
   renderNav();
   renderProducts();
   renderSummary();
-  document.querySelector("#catalogue-count").textContent = allItems.length;
-  document.querySelector("#section-count").textContent = categories.length;
 }
 
 navEl.addEventListener("click", event => {
@@ -434,6 +481,15 @@ document.querySelector("#clear-order").addEventListener("click", () => {
 
 function sendEmail(event) {
   const recipient = event.currentTarget.dataset.copyRecipient;
+  if (recipient === "boudreault") {
+    const shippingStatus = getBoudreaultShippingStatus();
+    if (!shippingStatus.ready) {
+      const message = shippingStatus.missingPrices.length
+        ? `The priced Boudreault subtotal is ${formatCurrency(shippingStatus.total)}, and ${shippingStatus.missingPrices.length} selected item${shippingStatus.missingPrices.length === 1 ? " has" : "s have"} no price listed. I cannot confirm the $150.00 free-shipping minimum. Do you want to continue?`
+        : `The Boudreault order is ${formatCurrency(BOUDREAULT_SHIPPING_THRESHOLD - shippingStatus.total)} short of the $150.00 free-shipping minimum. Do you want to continue anyway?`;
+      if (!window.confirm(message)) return;
+    }
+  }
   window.location.href = emailHref(recipient);
 }
 

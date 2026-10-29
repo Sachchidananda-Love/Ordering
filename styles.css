@@ -200,15 +200,28 @@ h2 { font-size: 30px; line-height: 1; margin-bottom: 0; }
 .order-total { display: flex; align-items: baseline; gap: 8px; padding: 20px 0 15px; border-bottom: 1px solid #d3e2d7; }
 .order-total strong { color: var(--mint-strong); font-size: 44px; letter-spacing: -.08em; line-height: .8; }
 .order-total span { color: var(--muted); font-size: 11px; }
+.boudreault-total { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid #d3e2d7; }
+.boudreault-total span, .boudreault-total small { display: block; }
+.boudreault-total span { font-size: 11px; font-weight: 700; }
+.boudreault-total small { margin-top: 2px; color: var(--muted); font-size: 9px; }
+.boudreault-total strong { color: var(--mint-strong); font-size: 18px; }
 .selected-list { min-height: 104px; max-height: 200px; overflow-y: auto; overflow-x: hidden; padding: 12px 0; border-bottom: 1px solid #d3e2d7; }
+.order-recipient + .order-recipient { margin-top: 13px; padding-top: 10px; border-top: 1px solid #d3e2d7; }
+.order-recipient h3 { margin: 0 0 4px; color: var(--ink); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.recipient-empty { margin: 0; color: var(--muted); font-size: 10px; }
 .empty-state { display: grid; justify-items: center; gap: 3px; padding: 11px 0; color: var(--muted); text-align: center; }
 .empty-state p { margin: 0; color: var(--ink); font-size: 12px; font-weight: 600; }.empty-state small { font-size: 10px; }
 .empty-icon { display: grid; place-items: center; width: 29px; height: 29px; margin-bottom: 3px; border-radius: 50%; background: white; color: var(--mint-strong); font-size: 18px; }
 .selected-item { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 7px 0; }
 .selected-item-name { min-width: 0; font-size: 11px; line-height: 1.25; }.selected-item-name strong { display: block; font-size: 11px; }.selected-item-name span { color: var(--muted); font-size: 9px; }
 .selected-item-qty { color: var(--mint-strong); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.product-price { margin-top: 4px; color: var(--coral); font-size: 10px; font-weight: 700; }
 .copy-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; margin-top: 0; border: 0; border-radius: 12px; background: var(--ink); color: white; font-size: 12px; font-weight: 700; transition: transform .15s, background .15s; }
 .copy-button:hover { background: var(--mint-strong); transform: translateY(-1px); }.copy-button.copied { background: var(--mint-strong); }.copy-icon { font-size: 15px; }
+.copy-button.boudreault-below-threshold { background: var(--coral); }
+.copy-button.boudreault-below-threshold:hover { background: #d85f46; }
+.copy-button.boudreault-ready { background: var(--ink); }
+.copy-button.boudreault-ready:hover { background: var(--mint-strong); }
 .copy-button[hidden] { display: none !important; }
 .mobile-copy-actions {
   position: fixed;
