@@ -22,7 +22,7 @@ const products = [
   { category: "LOOP Smoothies", brand: "LOOP", code: "815066", name: "Green vibes", detail: "6 × 300 ml", image: "815066" },
   { category: "LOOP Smoothies", brand: "LOOP", code: "815065", name: "Mango paradise", detail: "6 × 300 ml", image: "815065" },
   { category: "Milks", brand: "Milkadamia", code: "801034", name: "Lait de macadame", detail: "12 × 32 oz", image: "801034" },
-  { category: "Milks", brand: "Earth’s Own", code: "801006", name: "Boisson de soya", detail: "case", image: null },
+  { category: "Milks", brand: "Earth’s Own", code: "801006", name: "Boisson de soya", detail: "case", image: "soy" },
   { category: "Milks", brand: "Henrietta", code: "820001", name: "Henrietta Lait barista 3,8%", detail: "9 × 2 L", image: "820001" },
   { category: "Mate Libre", brand: "Mate Libre", code: "827050", name: "Original", detail: "12 × 355 ml", image: "827050" },
   { category: "Mate Libre", brand: "Mate Libre", code: "827051", name: "Rose Hibiscus", detail: "12 × 355 ml", image: "827051" },
@@ -58,40 +58,41 @@ const products = [
 ];
 
 const supplies = [
-  { category: "Shed", name: "Knives", code: "supply-16", recipient: "boudreault", price: 80.85 },
-  { category: "Shed", name: "Forks", code: "supply-15", recipient: "boudreault", price: 80.85 },
-  { category: "Shed", name: "Spoons", code: "supply-17", recipient: "boudreault", price: 80.85 },
-  { category: "Shed", name: "Coffee caraf", code: "supply-11", recipient: "boudreault", price: 169.87 },
-  { category: "Shed", name: "8 Oz Hot Drink To Go Cups", code: "supply-0", recipient: "nantel" },
-  { category: "Shed", name: "10 Oz Hot Drink To Go Cups", code: "supply-1", recipient: "nantel" },
-  { category: "Shed", name: "12 Oz Hot Drink To Go Cups", code: "supply-2", recipient: "nantel" },
-  { category: "Shed", name: "12 Oz Cold Drink To Go Cups", code: "supply-3", recipient: "nantel" },
-  { category: "Shed", name: "16 Oz Cold Drink To Go Cups", code: "supply-4", recipient: "nantel" },
-  { category: "Shed", name: "Hot Drink To Go Lids", code: "supply-5", recipient: "nantel" },
-  { category: "Shed", name: "Cold Drink To Go Lids", code: "supply-6", recipient: "nantel" },
-  { category: "Shed", name: "Straws", code: "supply-28", recipient: "olivia" },
-  { category: "Shed", name: "Sleeves", code: "supply-8", recipient: "nantel" },
-  { category: "Shed", name: "Sweetener", code: "supply-25", recipient: "boudreault", price: 47.59 },
-  { category: "Shed", name: "Brown sugar", code: "supply-27", recipient: "olivia" },
-  { category: "Shed", name: "Pampak # 1 sml togo", code: "supply-9", recipient: "boudreault", price: 52.24 },
-  { category: "Shed", name: "Pampak #3 lrg togo", code: "supply-10", recipient: "boudreault", price: 51.91 },
-  { category: "Shed", name: "Coffee Trays", code: "supply-34", recipient: "nantel" },
-  { category: "Shed", name: "Small to go bowl", detail: "500 / case · 16 oz · 115mm", code: "supply-35", recipient: "boudreault", price: 48.98, unit: "case" },
-  { category: "Shed", name: "Large to go bowl", detail: "300 / case · 34 oz · 165mm", code: "supply-36", recipient: "boudreault", price: 47.48, unit: "case" },
-  { category: "Shed", name: "250ml Deli Container", detail: "240 / case · 8 oz", code: "supply-31", recipient: "boudreault", price: 36.87, unit: "case" },
-  { category: "Shed", name: "500ml Deli Container", detail: "240 / case · 16 oz", code: "supply-32", recipient: "boudreault", price: 41.64, unit: "case" },
-  { category: "Shed", name: "1l Deli Container", detail: "300 / case · 32 oz", code: "supply-33", recipient: "boudreault", price: 57.66, unit: "case" },
-  { category: "Closet", name: "Large pastry bags", code: "supply-12", recipient: "olivia" },
-  { category: "Closet", name: "Small Greeseroof Sandwhich Bags", code: "supply-30", recipient: "boudreault", price: 31.96 },
-  { category: "Bulk Head", name: "Vanilla 1883", code: "supply-7", recipient: "nantel" },
-  { category: "Bulk Head", name: "Roll up papers", emailName: "White Napkin Bands", code: "supply-23", recipient: "boudreault", price: 23.68 },
-  { category: "Bulk Head", name: "Large pastry box", detail: "50 / case · 15.5 × 11 × 4", code: "supply-37", recipient: "boudreault", price: 62.86, unit: "case" },
-  { category: "Bulk Head", name: "Small window pastry boxes", code: "supply-29", recipient: "boudreault", price: 38.48 },
-  { category: "Bathrooms", name: "Neutralizer (floor)", code: "supply-21", recipient: "boudreault", price: 21.34 },
-  { category: "Bathrooms", name: "Sanitizer", code: "supply-20", recipient: "boudreault", price: 25.41 },
-  { category: "Bathrooms", name: "Toilet paper", code: "supply-26", recipient: "olivia" },
-  { category: "Bathrooms", name: "Hand towel", code: "supply-22", recipient: "boudreault", price: 41.20 },
-].map(item => ({ ...item, brand: item.category, detail: item.detail || "no catalogue image", image: null, unit: item.unit || "box" }));
+  { category: "Shed", name: "Knives", code: "supply-16", recipient: "boudreault", price: 80.85, image: "supply-16" },
+  { category: "Shed", name: "Forks", code: "supply-15", recipient: "boudreault", price: 80.85, image: "supply-15" },
+  { category: "Shed", name: "Spoons", code: "supply-17", recipient: "boudreault", price: 80.85, image: "supply-17" },
+  { category: "Shed", name: "Coffee caraf", code: "supply-11", recipient: "boudreault", price: 169.87, image: "supply-11" },
+  { category: "Shed", name: "8 Oz Hot Drink To Go Cups", code: "supply-0", recipient: "nantel", image: "supply-0" },
+  { category: "Shed", name: "10 Oz Hot Drink To Go Cups", code: "supply-1", recipient: "nantel", image: "supply-1" },
+  { category: "Shed", name: "12 Oz Hot Drink To Go Cups", code: "supply-2", recipient: "nantel", image: "supply-2" },
+  { category: "Shed", name: "12 Oz Cold Drink To Go Cups", code: "supply-3", recipient: "nantel", image: "supply-3" },
+  { category: "Shed", name: "16 Oz Cold Drink To Go Cups", code: "supply-4", recipient: "nantel", image: "supply-4" },
+  { category: "Shed", name: "Hot Drink To Go Lids", code: "supply-5", recipient: "nantel", image: "supply-5" },
+  { category: "Shed", name: "Cold Drink To Go Lids", code: "supply-6", recipient: "nantel", image: "supply-6" },
+  { category: "Shed", name: "Straws", code: "supply-28", recipient: "olivia", image: "supply-28" },
+  { category: "Shed", name: "Sleeves", code: "supply-8", recipient: "nantel", image: "supply-8" },
+  { category: "Shed", name: "Sweetener", code: "supply-25", recipient: "boudreault", price: 47.59, image: "supply-25" },
+  { category: "Shed", name: "Brown sugar", code: "supply-27", recipient: "olivia", image: "supply-27" },
+  { category: "Shed", name: "Pampak # 1 sml togo", code: "supply-9", recipient: "boudreault", price: 52.24, image: "supply-9" },
+  { category: "Shed", name: "Pampak #3 lrg togo", code: "supply-10", recipient: "boudreault", price: 51.91, image: "supply-10" },
+  { category: "Shed", name: "Coffee Trays", code: "supply-34", recipient: "nantel", image: "supply-34" },
+  { category: "Shed", name: "Handle bag large", code: "supply-38", recipient: "boudreault", image: "supply-38" },
+  { category: "Shed", name: "Small to go bowl", detail: "500 / case · 16 oz · 115mm", code: "supply-35", recipient: "boudreault", price: 48.98, unit: "case", image: "supply-35" },
+  { category: "Shed", name: "Large to go bowl", detail: "300 / case · 34 oz · 165mm", code: "supply-36", recipient: "boudreault", price: 47.48, unit: "case", image: "supply-36" },
+  { category: "Shed", name: "250ml Deli Container", detail: "240 / case · 8 oz", code: "supply-31", recipient: "boudreault", price: 36.87, unit: "case", image: "supply-31" },
+  { category: "Shed", name: "500ml Deli Container", detail: "240 / case · 16 oz", code: "supply-32", recipient: "boudreault", price: 41.64, unit: "case", image: "supply-32" },
+  { category: "Shed", name: "1l Deli Container", detail: "300 / case · 32 oz", code: "supply-33", recipient: "boudreault", price: 57.66, unit: "case", image: "supply-33" },
+  { category: "Closet", name: "Large pastry bags", code: "supply-12", recipient: "olivia", image: "supply-12" },
+  { category: "Closet", name: "Small Greeseroof Sandwhich Bags", code: "supply-30", recipient: "boudreault", price: 31.96, image: "supply-30" },
+  { category: "Bulk Head", name: "Vanilla 1883", code: "supply-7", recipient: "nantel", image: "supply-7" },
+  { category: "Bulk Head", name: "Roll up papers", emailName: "White Napkin Bands", code: "supply-23", recipient: "boudreault", price: 23.68, image: "supply-23" },
+  { category: "Bulk Head", name: "Large pastry box", detail: "50 / case · 15.5 × 11 × 4", code: "supply-37", recipient: "boudreault", price: 62.86, unit: "case", image: "supply-37" },
+  { category: "Bulk Head", name: "Small window pastry boxes", code: "supply-29", recipient: "boudreault", price: 38.48, image: "supply-29" },
+  { category: "Bathrooms", name: "Neutralizer (floor)", code: "supply-21", recipient: "boudreault", price: 21.34, image: "supply-21" },
+  { category: "Bathrooms", name: "Sanitizer", code: "supply-20", recipient: "boudreault", price: 25.41, image: "supply-20" },
+  { category: "Bathrooms", name: "Toilet paper", code: "supply-26", recipient: "olivia", image: "supply-26" },
+  { category: "Bathrooms", name: "Hand towel", code: "supply-22", recipient: "boudreault", price: 41.20, image: "supply-22" },
+].map(item => ({ ...item, brand: item.category, detail: item.detail || "no catalogue image", image: item.image || null, unit: item.unit || "box" }));
 
 const milkAndSyrupCategories = new Set(["Milks", "Chai"]);
 const catalogueProducts = products.map(item => ({
@@ -122,6 +123,11 @@ const BOUDREAULT_SHIPPING_THRESHOLD = 150;
 
 function getQuantity(item) { return Math.max(0, Number.parseInt(quantities[item.code], 10) || 0); }
 function formatCurrency(value) { return `$${value.toFixed(2)}`; }
+function imageSrc(item) {
+  if (!item.image) return "";
+  const folder = item.code.startsWith("supply-") ? "supplies" : "products";
+  return `public/assets/${folder}/${item.image}.png`;
+}
 function getRecipientItems(recipient) { return allItems.filter(item => item.recipient === recipient); }
 function getRecipientTotal(recipient) {
   return getRecipientItems(recipient).reduce((sum, item) => sum + getQuantity(item) * (item.price || 0), 0);
@@ -161,7 +167,7 @@ function categoryThumbnail(category) {
   if (sectionIcons[category]) return `<span class="category-thumb category-icon" aria-hidden="true">${sectionIcons[category]}</span>`;
   const item = allItems.find(candidate => candidate.category === category && candidate.image);
   if (!item) return `<span class="category-thumb category-thumb-placeholder" aria-hidden="true">✦</span>`;
-  return `<img class="category-thumb" src="public/assets/products/${item.image}.png" alt="" />`;
+  return `<img class="category-thumb" src="${imageSrc(item)}" alt="" />`;
 }
 
 function slugify(value) { return value.toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
@@ -169,7 +175,7 @@ function slugify(value) { return value.toLowerCase().replace(/[^a-z0-9]+/g, "-")
 function drinkThumbnail(group) {
   const item = allItems.find(candidate => candidate.drinkGroup === group && candidate.image);
   if (!item) return `<span class="drink-thumb drink-thumb-placeholder" aria-hidden="true">✦</span>`;
-  return `<img class="drink-thumb" src="public/assets/products/${item.image}.png" alt="" />`;
+  return `<img class="drink-thumb" src="${imageSrc(item)}" alt="" />`;
 }
 
 function syncStickyOffsets() {
@@ -196,7 +202,7 @@ function renderNav() {
 function renderProduct(item) {
   const qty = getQuantity(item);
   const image = item.image
-    ? `<img src="public/assets/products/${item.image}.png" alt="${item.name}" loading="lazy" />`
+    ? `<img src="${imageSrc(item)}" alt="${item.name}" loading="lazy" />`
     : `<span class="no-image">Image coming soon</span>`;
   return `
     <article class="product-card ${qty ? "in-order" : ""}" data-code="${item.code}">
