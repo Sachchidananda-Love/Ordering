@@ -76,7 +76,7 @@ const supplies = [
   { category: "Shed", name: "Pampak # 1 sml togo", code: "supply-9", recipient: "boudreault", price: 52.24, image: "supply-9" },
   { category: "Shed", name: "Pampak #3 lrg togo", code: "supply-10", recipient: "boudreault", price: 51.91, image: "supply-10" },
   { category: "Shed", name: "Coffee Trays", code: "supply-34", recipient: "nantel", image: "supply-34" },
-  { category: "Shed", name: "Handle bag large", code: "supply-38", recipient: "boudreault", image: "supply-38" },
+  { category: "Shed", name: "Handle bag large", detail: "250 / case · 13 × 7 × 13", code: "supply-38", recipient: "boudreault", price: 53.08, unit: "case", image: "supply-38" },
   { category: "Shed", name: "Small to go bowl", detail: "500 / case · 16 oz · 115mm", code: "supply-35", recipient: "boudreault", price: 48.98, unit: "case", image: "supply-35" },
   { category: "Shed", name: "Large to go bowl", detail: "300 / case · 34 oz · 165mm", code: "supply-36", recipient: "boudreault", price: 47.48, unit: "case", image: "supply-36" },
   { category: "Shed", name: "250ml Deli Container", detail: "240 / case · 8 oz", code: "supply-31", recipient: "boudreault", price: 36.87, unit: "case", image: "supply-31" },
