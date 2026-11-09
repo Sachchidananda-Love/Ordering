@@ -84,7 +84,7 @@ const supplies = [
   { category: "Shed", name: "1l Deli Container", detail: "300 / case · 32 oz", code: "supply-33", recipient: "boudreault", price: 57.66, unit: "case", image: "supply-33" },
   { category: "Closet", name: "Large pastry bags", code: "supply-12", recipient: "olivia", image: "supply-12" },
   { category: "Closet", name: "Small Greeseroof Sandwhich Bags", code: "supply-30", recipient: "boudreault", price: 31.96, image: "supply-30" },
-  { category: "Bulk Head", name: "Vanilla 1883", code: "supply-7", recipient: "nantel", image: "supply-7" },
+  { category: "Bulk Head", name: "Vanilla 1883", code: "supply-7", recipient: "nantel", unit: "", image: "supply-7" },
   { category: "Bulk Head", name: "Roll up papers", emailName: "White Napkin Bands", code: "supply-23", recipient: "boudreault", price: 23.68, image: "supply-23" },
   { category: "Bulk Head", name: "Large pastry box", detail: "50 / case · 15.5 × 11 × 4", code: "supply-37", recipient: "boudreault", price: 62.86, unit: "case", image: "supply-37" },
   { category: "Bulk Head", name: "Small window pastry boxes", code: "supply-29", recipient: "boudreault", price: 38.48, image: "supply-29" },
@@ -92,7 +92,9 @@ const supplies = [
   { category: "Bathrooms", name: "Sanitizer", code: "supply-20", recipient: "boudreault", price: 25.41, image: "supply-20" },
   { category: "Bathrooms", name: "Toilet paper", code: "supply-26", recipient: "olivia", image: "supply-26" },
   { category: "Bathrooms", name: "Hand towel", code: "supply-22", recipient: "boudreault", price: 41.20, image: "supply-22" },
-].map(item => ({ ...item, brand: item.category, detail: item.detail || "no catalogue image", image: item.image || null, unit: item.unit || "box" }));
+  { category: "Bathrooms", name: "Box Dispenser Napkins", code: "supply-39", recipient: "boudreault", image: "supply-39" },
+  { category: "Bathrooms", name: "Box Dinner Napkins", code: "supply-40", recipient: "boudreault", image: "supply-40" },
+].map(item => ({ ...item, brand: item.category, detail: item.detail || "no catalogue image", image: item.image || null, unit: item.unit === undefined ? "box" : item.unit }));
 
 const milkAndSyrupCategories = new Set(["Milks", "Chai"]);
 const catalogueProducts = products.map(item => ({
@@ -329,10 +331,10 @@ function renderProducts() {
 
 function orderLines(items = allItems) {
   return items.filter(item => getQuantity(item) > 0).map(item => {
-    const unit = item.unit || "case";
+    const unit = item.unit === undefined ? "case" : item.unit;
     if (item.code.startsWith("supply-")) {
       const name = item.emailName || item.name.toLowerCase();
-      return `${getQuantity(item)} x ${unit} ${name}`;
+      return `${getQuantity(item)} x ${unit ? `${unit} ` : ""}${name}`;
     }
     return `${getQuantity(item)} x ${unit} — ${item.code} — ${item.name}`;
   });
