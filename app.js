@@ -92,8 +92,8 @@ const supplies = [
   { category: "Bathrooms", name: "Sanitizer", code: "supply-20", recipient: "boudreault", price: 25.41, image: "supply-20" },
   { category: "Bathrooms", name: "Toilet paper", code: "supply-26", recipient: "olivia", image: "supply-26" },
   { category: "Bathrooms", name: "Hand towel", code: "supply-22", recipient: "boudreault", price: 41.20, image: "supply-22" },
-  { category: "Bathrooms", name: "Box Dispenser Napkins", code: "supply-39", recipient: "boudreault", image: "supply-39" },
-  { category: "Bathrooms", name: "Box Dinner Napkins", code: "supply-40", recipient: "boudreault", image: "supply-40" },
+  { category: "Bathrooms", name: "Box Dispenser Napkins", code: "supply-39", recipient: "boudreault", price: 51.14, image: "supply-39" },
+  { category: "Bathrooms", name: "Box Dinner Napkins", code: "supply-40", recipient: "boudreault", price: 73.01, image: "supply-40" },
 ].map(item => ({ ...item, brand: item.category, detail: item.detail || "no catalogue image", image: item.image || null, unit: item.unit === undefined ? "box" : item.unit }));
 
 const milkAndSyrupCategories = new Set(["Milks", "Chai"]);
@@ -103,6 +103,110 @@ const catalogueProducts = products.map(item => ({
   drinkGroup: milkAndSyrupCategories.has(item.category) ? "Milks + Syrups" : item.category,
   recipient: "nantel",
 }));
+
+// Source: Nantel_Drink_Orders.xlsx · May 9 to Nov 9, 2026 · individual units ordered.
+// The source contains one additional SKU (827055) that is not in the current catalogue.
+const NANTEL_DRINK_SALES = [
+  { code: "815055", units: 198 }, // Morning Glory
+  { code: "828011", units: 168 }, // Original
+  { code: "815064", units: 156 }, // Clementine
+  { code: "815028", units: 156 }, // Lemon Lime
+  { code: "815026", units: 156 }, // Orange Clementine
+  { code: "867116", units: 140 }, // Sparkling Natural
+  { code: "815015", units: 120 }, // Booster Shot
+  { code: "815027", units: 120 }, // Ginger Lemon
+  { code: "815029", units: 120 }, // Strawberry Blueberry
+  { code: "867110", units: 110 }, // Still Natural
+  { code: "815041", units: 108 }, // Peach Iced Tea
+  { code: "815056", units: 108 }, // Better Together
+  { code: "828020", units: 96 }, // Blood Orange
+  { code: "866023", units: 96 }, // Sparkling Hibiscus + Mango
+  { code: "815059", units: 96 }, // Beach Bum
+  { code: "815060", units: 90 }, // King of the Hill
+  { code: "815038", units: 84 }, // Grapefruit Iced Tea
+  { code: "815039", units: 84 }, // Strawberry Iced Tea
+  { code: "867113", units: 80 }, // Sparkling Blood Orange
+  { code: "815063", units: 78 }, // Cranberry
+  { code: "815062", units: 78 }, // High Achiever
+  { code: "828021", units: 72 }, // Cherry
+  { code: "866020", units: 72 }, // Sparkling Ginger + Chamomile
+  { code: "866021", units: 72 }, // Sparkling Peppermint + Dandelion
+  { code: "815037", units: 72 }, // Lemon Iced Tea
+  { code: "815014", units: 72 }, // Recover Shot
+  { code: "867114", units: 70 }, // Sparkling Dragon Fruit
+  { code: "827405", units: 64 }, // Vitalité (Raspberry Mint & Echinacea)
+  { code: "866022", units: 60 }, // Sparkling Nettle + Rosemary
+  { code: "815058", units: 60 }, // Deep Green
+  { code: "815061", units: 60 }, // Undercover
+  { code: "867115", units: 60 }, // Sparkling Wild Berries
+  { code: "827407", units: 56 }, // Le Tonifiant (Sugar-Free Ginger)
+  { code: "867112", units: 50 }, // Sparkling Mango
+  { code: "827402", units: 48 }, // Digestif (Hibiscus & Fennel)
+  { code: "827404", units: 48 }, // Le Flamboyant (Passion Fruit & Ginseng)
+  { code: "815016", units: 48 }, // Brain Fuel Shot
+  { code: "827053", units: 48 }, // Mint Lime
+  { code: "827052", units: 48 }, // Passion
+  { code: "827411", units: 40 }, // Cream Soda (Vanilla & Lemon, Sugar-Free)
+  { code: "827403", units: 40 }, // Relaxant 2.0 (Grapefruit, Verbena & Skullcap)
+  { code: "867118", units: 40 }, // Sparkling Blue Raspberry
+  { code: "867111", units: 40 }, // Sparkling Lime
+  { code: "827050", units: 36 }, // Original
+  { code: "827056", units: 36 }, // Peach
+  { code: "827051", units: 36 }, // Rose Hibiscus
+  { code: "827054", units: 36 }, // Sugar-Free Ginger
+  { code: "827055", units: 36 }, // Sugar-Free Watermelon
+  { code: "867117", units: 30 }, // Sparkling Blackberry
+  { code: "815065", units: 18 }, // Mango paradise
+  { code: "827401", units: 16 }, // Le Boost (Cardamom & Moringa)
+  { code: "815066", units: 12 }, // Green vibes
+  { code: "827400", units: 8 }, // Le Remontant (Ginger & Raspberry Leaf)
+];
+
+const drinkSalesByCode = new Map(NANTEL_DRINK_SALES.map((sale, sourceOrder) => [sale.code, { ...sale, sourceOrder }]));
+const drinkPopularityByCode = new Map();
+const rankedDrinkItems = catalogueProducts
+  .filter(item => item.category === "Drinks" && drinkSalesByCode.has(item.code))
+  .sort((a, b) => {
+    const saleA = drinkSalesByCode.get(a.code);
+    const saleB = drinkSalesByCode.get(b.code);
+    return saleB.units - saleA.units || saleA.sourceOrder - saleB.sourceOrder;
+  });
+const rankedDrinkCount = rankedDrinkItems.length;
+
+rankedDrinkItems.forEach((item, index) => {
+  const sale = drinkSalesByCode.get(item.code);
+  const overallRank = index + 1;
+  drinkPopularityByCode.set(item.code, {
+    units: sale.units,
+    overallRank,
+    overallFilled: Math.max(1, Math.ceil(((rankedDrinkCount - overallRank + 1) * 5) / rankedDrinkCount)),
+  });
+});
+
+const drinkItemsByGroup = new Map();
+rankedDrinkItems.forEach(item => {
+  const groupItems = drinkItemsByGroup.get(item.drinkGroup) || [];
+  groupItems.push(item);
+  drinkItemsByGroup.set(item.drinkGroup, groupItems);
+});
+
+drinkItemsByGroup.forEach(groupItems => {
+  groupItems.sort((a, b) => {
+    const saleA = drinkSalesByCode.get(a.code);
+    const saleB = drinkSalesByCode.get(b.code);
+    return saleB.units - saleA.units || saleA.sourceOrder - saleB.sourceOrder;
+  });
+  groupItems.forEach((item, index) => {
+    const popularity = drinkPopularityByCode.get(item.code);
+    const sectionRank = index + 1;
+    drinkPopularityByCode.set(item.code, {
+      ...popularity,
+      sectionRank,
+      sectionSize: groupItems.length,
+      sectionFilled: groupItems.length - sectionRank + 1,
+    });
+  });
+});
 
 const allItems = [...catalogueProducts, ...supplies];
 const categories = [...new Set(allItems.map(item => item.category))];
@@ -139,6 +243,44 @@ function getBoudreaultShippingStatus() {
   const total = selected.reduce((sum, item) => sum + getQuantity(item) * (item.price || 0), 0);
   const missingPrices = selected.filter(item => typeof item.price !== "number");
   return { total, missingPrices, ready: total >= BOUDREAULT_SHIPPING_THRESHOLD && !missingPrices.length };
+}
+
+function compareDrinkPopularity(a, b) {
+  const popularityA = drinkPopularityByCode.get(a.code);
+  const popularityB = drinkPopularityByCode.get(b.code);
+  if (popularityA && popularityB) return popularityA.sectionRank - popularityB.sectionRank;
+  if (popularityA) return -1;
+  if (popularityB) return 1;
+  return 0;
+}
+
+function renderPopularityDots(total, filled) {
+  return Array.from({ length: total }, (_, index) => `
+    <span class="popularity-dot ${index < filled ? "is-filled" : ""}" aria-hidden="true"></span>
+  `).join("");
+}
+
+function renderPopularity(item) {
+  const popularity = drinkPopularityByCode.get(item.code);
+  if (!popularity) return "";
+  return `
+    <div class="product-popularity" aria-label="Popularity based on units ordered from May 9 to November 9, 2026">
+      <div class="popularity-row">
+        <span class="popularity-label">By section</span>
+        <span class="popularity-dots" role="img" aria-label="Ranked ${popularity.sectionRank} of ${popularity.sectionSize} in this section">
+          ${renderPopularityDots(popularity.sectionSize, popularity.sectionFilled)}
+        </span>
+        <span class="popularity-value">${popularity.units} units</span>
+      </div>
+      <div class="popularity-row">
+        <span class="popularity-label">Overall</span>
+        <span class="popularity-dots popularity-dots-overall" role="img" aria-label="${popularity.overallFilled} of 5 overall popularity dots">
+          ${renderPopularityDots(5, popularity.overallFilled)}
+        </span>
+        <span class="popularity-value">#${popularity.overallRank} of ${rankedDrinkCount}</span>
+      </div>
+    </div>
+  `;
 }
 
 function syncQuantityCard(item) {
@@ -213,6 +355,7 @@ function renderProduct(item) {
         <div class="product-brand">${item.brand}</div>
         <h4 class="product-name">${item.name}</h4>
         <div class="product-detail">${item.detail}</div>
+        ${item.category === "Drinks" ? renderPopularity(item) : ""}
         ${item.recipient === "boudreault" ? `<div class="product-price">${typeof item.price === "number" ? `${formatCurrency(item.price)} / ${item.unit || "case"}` : "Price not listed"}</div>` : ""}
         ${item.code.startsWith("supply-") ? "" : `<div class="product-code">Code ${item.code}</div>`}
         <div class="quantity-row">
@@ -242,13 +385,13 @@ function renderDrinkSection(items) {
     </nav>
   `;
   const groups = visibleGroups.map(group => {
-    const groupItems = items.filter(item => item.drinkGroup === group);
+    const groupItems = items.filter(item => item.drinkGroup === group).sort(compareDrinkPopularity);
     const isOpen = drinkGroupState[group] !== false;
     return `
       <section class="drink-group ${isOpen ? "is-open" : ""}" id="drink-group-${slugify(group)}" data-drink-group="${group}">
         <button class="drink-group-toggle" type="button" data-toggle-drink-group="${group}" aria-expanded="${isOpen}">
           <span class="drink-group-title">
-            <span><strong>${group}</strong><small>${groupItems.length} item${groupItems.length === 1 ? "" : "s"}</small></span>
+            <span><strong>${group}</strong><small>${groupItems.length} item${groupItems.length === 1 ? "" : "s"} · most sold first</small></span>
           </span>
           <span class="drink-group-chevron" aria-hidden="true">${isOpen ? "⌃" : "⌄"}</span>
         </button>
@@ -259,7 +402,7 @@ function renderDrinkSection(items) {
     `;
   }).join("");
   return `<section class="product-section product-section-drinks" id="drinks">
-    <div class="product-section-heading"><h3>Drinks</h3><span>${items.length} items</span></div>
+    <div class="product-section-heading"><h3>Drinks</h3><span>${items.length} items · ranked by units ordered</span></div>
     ${drinkNav}
     <div class="drink-groups">${groups}</div>
   </section>`;
@@ -351,14 +494,14 @@ function emailMessage(recipient) {
 const emailDetails = {
   nantel: { to: "commandes@nantelmcdiarmid.com", subject: "Commande Cafe Palmier" },
   boudreault: { to: "Luc.Lessard@imperialdade.com", subject: "Order Cafe Palmier" },
-  olivia: { to: "olivia@cafepalmier.ca", subject: "Order Cafe Palmier" },
+  olivia: { to: "olivia@cafepalmier.ca", subject: "" },
 };
 
 function emailHref(recipient) {
   const details = emailDetails[recipient];
   const lines = orderLines(allItems.filter(item => item.recipient === recipient));
   const subject = recipient === "olivia" && lines.length
-    ? `${details.subject} — ${lines.join(", ")}`
+    ? `${lines.join(", ")} please:))`
     : details.subject;
   const params = [`subject=${encodeURIComponent(subject)}`];
   if (recipient !== "olivia") params.push(`body=${encodeURIComponent(emailMessage(recipient))}`);
