@@ -162,51 +162,97 @@ const NANTEL_DRINK_SALES = [
   { code: "827400", units: 8 }, // Le Remontant (Ginger & Raspberry Leaf)
 ];
 
-const drinkSalesByCode = new Map(NANTEL_DRINK_SALES.map((sale, sourceOrder) => [sale.code, { ...sale, sourceOrder }]));
+const ORDER_HISTORY_STORAGE_KEY = "weekly-order-history-v1";
+
+function loadOrderHistory() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(ORDER_HISTORY_STORAGE_KEY) || "[]");
+    return Array.isArray(stored) ? stored : [];
+  } catch {
+    return [];
+  }
+}
+
+function getUnitsPerCase(item) {
+  const match = String(item.detail || "").match(/^\s*(\d+)\s*[×x]/);
+  return match ? Number.parseInt(match[1], 10) : 1;
+}
+
+function getRecordedNantelUnits(history) {
+  const unitsByCode = new Map();
+  history
+    .filter(record => record && record.recipient === "nantel")
+    .forEach(record => {
+      Object.entries(record.quantities || {}).forEach(([code, cases]) => {
+        const item = catalogueProducts.find(candidate => candidate.code === code);
+        if (!item || item.category !== "Drinks") return;
+        const quantity = Math.max(0, Number.parseInt(cases, 10) || 0);
+        if (!quantity) return;
+        unitsByCode.set(code, (unitsByCode.get(code) || 0) + quantity * getUnitsPerCase(item));
+      });
+    });
+  return unitsByCode;
+}
+
+const orderHistory = loadOrderHistory();
+const recordedNantelUnitsByCode = getRecordedNantelUnits(orderHistory);
+const drinkSalesByCode = new Map(NANTEL_DRINK_SALES.map((sale, sourceOrder) => {
+  const recordedUnits = recordedNantelUnitsByCode.get(sale.code) || 0;
+  return [sale.code, { ...sale, sourceOrder, recordedUnits, units: sale.units + recordedUnits }];
+}));
 const drinkPopularityByCode = new Map();
-const rankedDrinkItems = catalogueProducts
-  .filter(item => item.category === "Drinks" && drinkSalesByCode.has(item.code))
-  .sort((a, b) => {
-    const saleA = drinkSalesByCode.get(a.code);
-    const saleB = drinkSalesByCode.get(b.code);
-    return saleB.units - saleA.units || saleA.sourceOrder - saleB.sourceOrder;
-  });
-const rankedDrinkCount = rankedDrinkItems.length;
+let rankedDrinkItems = [];
+let rankedDrinkCount = 0;
+let drinkItemsByGroup = new Map();
 
-rankedDrinkItems.forEach((item, index) => {
-  const sale = drinkSalesByCode.get(item.code);
-  const overallRank = index + 1;
-  drinkPopularityByCode.set(item.code, {
-    units: sale.units,
-    overallRank,
-    overallFilled: Math.max(1, Math.ceil(((rankedDrinkCount - overallRank + 1) * 5) / rankedDrinkCount)),
-  });
-});
+function calculateDrinkPopularity() {
+  rankedDrinkItems = catalogueProducts
+    .filter(item => item.category === "Drinks" && drinkSalesByCode.has(item.code))
+    .sort((a, b) => {
+      const saleA = drinkSalesByCode.get(a.code);
+      const saleB = drinkSalesByCode.get(b.code);
+      return saleB.units - saleA.units || saleA.sourceOrder - saleB.sourceOrder;
+    });
+  rankedDrinkCount = rankedDrinkItems.length;
 
-const drinkItemsByGroup = new Map();
-rankedDrinkItems.forEach(item => {
-  const groupItems = drinkItemsByGroup.get(item.drinkGroup) || [];
-  groupItems.push(item);
-  drinkItemsByGroup.set(item.drinkGroup, groupItems);
-});
-
-drinkItemsByGroup.forEach(groupItems => {
-  groupItems.sort((a, b) => {
-    const saleA = drinkSalesByCode.get(a.code);
-    const saleB = drinkSalesByCode.get(b.code);
-    return saleB.units - saleA.units || saleA.sourceOrder - saleB.sourceOrder;
-  });
-  groupItems.forEach((item, index) => {
-    const popularity = drinkPopularityByCode.get(item.code);
-    const sectionRank = index + 1;
+  drinkPopularityByCode.clear();
+  rankedDrinkItems.forEach((item, index) => {
+    const sale = drinkSalesByCode.get(item.code);
+    const overallRank = index + 1;
     drinkPopularityByCode.set(item.code, {
-      ...popularity,
-      sectionRank,
-      sectionSize: groupItems.length,
-      sectionFilled: groupItems.length - sectionRank + 1,
+      units: sale.units,
+      overallRank,
+      overallFilled: Math.max(1, Math.ceil(((rankedDrinkCount - overallRank + 1) * 5) / rankedDrinkCount)),
     });
   });
-});
+
+  drinkItemsByGroup = new Map();
+  rankedDrinkItems.forEach(item => {
+    const groupItems = drinkItemsByGroup.get(item.drinkGroup) || [];
+    groupItems.push(item);
+    drinkItemsByGroup.set(item.drinkGroup, groupItems);
+  });
+
+  drinkItemsByGroup.forEach(groupItems => {
+    groupItems.sort((a, b) => {
+      const saleA = drinkSalesByCode.get(a.code);
+      const saleB = drinkSalesByCode.get(b.code);
+      return saleB.units - saleA.units || saleA.sourceOrder - saleB.sourceOrder;
+    });
+    groupItems.forEach((item, index) => {
+      const popularity = drinkPopularityByCode.get(item.code);
+      const sectionRank = index + 1;
+      drinkPopularityByCode.set(item.code, {
+        ...popularity,
+        sectionRank,
+        sectionSize: groupItems.length,
+        sectionFilled: groupItems.length - sectionRank + 1,
+      });
+    });
+  });
+}
+
+calculateDrinkPopularity();
 
 const allItems = [...catalogueProducts, ...supplies];
 const categories = [...new Set(allItems.map(item => item.category))];
@@ -224,6 +270,7 @@ const selectedListEl = document.querySelector("#selected-list");
 const totalUnitsEl = document.querySelector("#total-units");
 const boudreaultTotalEl = document.querySelector("#boudreault-total");
 const boudreaultShippingNoteEl = document.querySelector("#boudreault-shipping-note");
+const nantelHistoryNoteEl = document.querySelector("#nantel-history-note");
 const emailButtons = document.querySelectorAll("[data-copy-recipient]");
 const BOUDREAULT_SHIPPING_THRESHOLD = 150;
 
@@ -264,7 +311,7 @@ function renderPopularity(item) {
   const popularity = drinkPopularityByCode.get(item.code);
   if (!popularity) return "";
   return `
-    <div class="product-popularity" aria-label="Popularity based on units ordered from May 9 to November 9, 2026">
+    <div class="product-popularity" aria-label="Popularity based on historical units ordered from May 9 to November 9, 2026 plus Nantel orders recorded in this browser">
       <div class="popularity-row">
         <span class="popularity-label">By section</span>
         <span class="popularity-dots" role="img" aria-label="Ranked ${popularity.sectionRank} of ${popularity.sectionSize} in this section">
@@ -491,6 +538,32 @@ function emailMessage(recipient) {
   return [intro, "", ...lines].join("\n");
 }
 
+function recordOrder(recipient) {
+  if (recipient !== "nantel") return false;
+  const selectedItems = allItems.filter(item => item.recipient === recipient && getQuantity(item) > 0);
+  if (!selectedItems.length) return false;
+
+  orderHistory.push({
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    createdAt: new Date().toISOString(),
+    recipient,
+    quantities: Object.fromEntries(selectedItems.map(item => [item.code, getQuantity(item)])),
+  });
+  localStorage.setItem(ORDER_HISTORY_STORAGE_KEY, JSON.stringify(orderHistory));
+
+  selectedItems
+    .filter(item => item.category === "Drinks")
+    .forEach(item => {
+      const sale = drinkSalesByCode.get(item.code);
+      if (!sale) return;
+      const addedUnits = getQuantity(item) * getUnitsPerCase(item);
+      sale.recordedUnits += addedUnits;
+      sale.units += addedUnits;
+    });
+  calculateDrinkPopularity();
+  return true;
+}
+
 const emailDetails = {
   nantel: { to: "commandes@nantelmcdiarmid.com", subject: "Commande Cafe Palmier" },
   boudreault: { to: "Luc.Lessard@imperialdade.com", subject: "Order Cafe Palmier" },
@@ -534,6 +607,10 @@ function renderSummary() {
   const boudreaultStatus = getBoudreaultShippingStatus();
   totalUnitsEl.textContent = totalUnits;
   boudreaultTotalEl.textContent = formatCurrency(boudreaultStatus.total);
+  const nantelOrderCount = orderHistory.filter(record => record && record.recipient === "nantel").length;
+  nantelHistoryNoteEl.textContent = nantelOrderCount
+    ? `${nantelOrderCount} Nantel order${nantelOrderCount === 1 ? "" : "s"} recorded in this browser`
+    : "Nantel sales history starts after the first sent order";
   boudreaultShippingNoteEl.textContent = boudreaultStatus.missingPrices.length
     ? "Some Boudreault items have no listed price"
     : boudreaultStatus.ready
@@ -640,6 +717,10 @@ function sendEmail(event) {
         : `The Boudreault order is ${formatCurrency(BOUDREAULT_SHIPPING_THRESHOLD - shippingStatus.total)} short of the $150.00 free-shipping minimum. Do you want to continue anyway?`;
       if (!window.confirm(message)) return;
     }
+  }
+  if (recordOrder(recipient)) {
+    renderProducts();
+    renderSummary();
   }
   window.location.href = emailHref(recipient);
 }
